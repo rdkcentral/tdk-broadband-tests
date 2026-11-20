@@ -1,0 +1,60 @@
+#!/bin/bash
+
+##########################################################################
+# If not stated otherwise in this file or this component's Licenses.txt
+# file the following copyright and licenses apply:
+#
+# Copyright 2019 RDK Management
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##########################################################################
+#
+
+#To Start hub in the machine,
+#Input params: $var2 - path of selenium standalone file in the machine
+#	       $var3 - log file
+start_hub()
+{
+        export DISPLAY=:0
+#       Uncomment lines L1 and comment lines L2 if selenium version = 3.141.59
+#       Uncomment lines L2 and comment lines L1 if selenium version = 4.9.0
+#       L1 below
+#       java -jar $var2 -role hub -host $var4 > $var3 2>&1 &
+#       L2 below
+        java -jar $var2 hub > $var3 2>&1 &
+        sleep 10
+#       L1 below
+#       value="$(cat $var3 | grep "Selenium Grid hub is up and running" > /dev/null && echo "SUCCESS" || echo "FAILURE")"
+#       L2 below
+        value="$(cat $var3 | grep "Started Selenium Hub" > /dev/null && echo "SUCCESS" || echo "FAILURE")"
+        echo "OUTPUT:$value"
+}
+#To kill the selenium hub in the machine
+kill_selenium()
+{
+        value="$(sudo pkill -f "hub" > /dev/null 2>&1 && echo "SUCCESS" || echo "FAILURE")"
+        echo "OUTPUT:$value"
+}
+event=$1
+var2=$2
+var3=$3
+var4=$4
+
+# Invoke the function based on the argument passed
+case $event in
+   "start_hub")
+        start_hub;;
+   "kill_selenium")
+        kill_selenium;;
+   *) echo "Invalid Argument passed";;
+esac
